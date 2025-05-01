@@ -3,6 +3,8 @@ import gallery_icon from './gallery_icon.jpeg'
 import help_icon from './help_icon.jpeg'
 import logo_icon from './logo_icon.png'
 import logo_big from './logo_big.png'
+import logo_big_rev from './logo_big_rev.png'
+import logo_rev from './logo_rev.png'
 import logo from './logo.png'
 import img1 from './img1.jpeg'
 import img2 from './img2.jpeg'
@@ -29,6 +31,8 @@ const assets = {
     logo_big,
     logo_icon,
     logo,
+    logo_rev,
+    logo_big_rev,
     img1,
     img2,
     img3,

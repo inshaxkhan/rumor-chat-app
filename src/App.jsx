@@ -1,4 +1,5 @@
 import React from 'react'
+import './index.css'
 import { Route, Routes } from 'react-router-dom'
 import Login from './pages/Login/Login'
 import Chat from './pages/Chat/Chat'
