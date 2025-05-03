@@ -1,18 +1,19 @@
 # RUMOR : chat app
 A full-stack real-time chat application built with React (Vite) and Firebase. Users can create accounts, chat with friends in real-time, and share images in chat.
+Project started on: 02/05/2025
 
 ## Features
-#### User Authentication – Sign up and log in with Firebase Authentication
-#### Real-time Messaging – Send and receive messages instantly using Firestore
-#### Image Sharing – Upload and send images in chat using Firebase Storage
-#### Responsive UI – Clean and responsive chat interface built with React
+- User Authentication – Sign up and log in with Firebase Authentication
+- Real-time Messaging – Send and receive messages instantly using Firestore
+- Image Sharing – Upload and send images in chat using Firebase Storage
+- Responsive UI – Clean and responsive chat interface built with React
 
 ## Tech Stack
-#### Frontend: React JS (Vite)
-#### Backend: Firebase
-#### Firebase Authentication
-#### Firestore Database
-#### Firebase Storage
+- Frontend: React JS (Vite)
+- Backend: Firebase
+- Firebase Authentication
+- Firestore Database
+- Firebase Storage
 
 ## Getting Started
 1. Prerequisites
@@ -50,4 +51,6 @@ npm run dev
 ```
 
 ## Screenshots
-![]
+![Login Page](screenshots/1.png)
+![Chat Page](screenshots/2.png)
+
