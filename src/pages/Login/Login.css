@@ -6,3 +6,56 @@
     align-items: center;
     justify-content: space-evenly;
 }
+
+.login .logo{
+    width: max(20vw, 200px);
+}
+
+.login-form{
+    background: #c68729;
+    color: white;
+    padding: 20px 30px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    border-radius: 10px;
+}
+
+.login-form h2{
+    font-weight: 500;
+}
+
+.form-input{
+    padding: 8px 10px;
+    border: 1px solid #FAF7F0;
+    border-radius: 3px;
+    outline-color: #FAF7F0;
+}
+
+.login-form button{
+    background-color:  #6A4328;
+    border: 2px solid #FAF7F0;
+    border-radius: 5px;
+    padding: 5px;
+    font-size: 15px;
+    cursor: pointer;
+}
+
+.login-term{
+    display: flex;
+    gap:5px;
+    font-size: 12px;
+    color: #6A4328;
+}
+
+.login-forgot{
+    display: flex;
+    flex-direction: column;
+    gap:5px;
+}
+
+.login-toggle{
+    font-size: 13px;
+    color: #6A4328;
+
+}
