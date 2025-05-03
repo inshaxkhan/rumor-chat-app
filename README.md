@@ -1,12 +1,53 @@
-# React + Vite
+# RUMOR : chat app
+A full-stack real-time chat application built with React (Vite) and Firebase. Users can create accounts, chat with friends in real-time, and share images in chat.
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Features
+#### User Authentication – Sign up and log in with Firebase Authentication
+#### Real-time Messaging – Send and receive messages instantly using Firestore
+#### Image Sharing – Upload and send images in chat using Firebase Storage
+#### Responsive UI – Clean and responsive chat interface built with React
 
-Currently, two official plugins are available:
+## Tech Stack
+#### Frontend: React JS (Vite)
+#### Backend: Firebase
+#### Firebase Authentication
+#### Firestore Database
+#### Firebase Storage
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Getting Started
+1. Prerequisites
+Node.js and npm installed
 
-## Expanding the ESLint configuration
+2. Firebase project (set up in Firebase Console)
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+3. Installation
+Clone the repository:
+```
+git clone https://github.com/inshaxkhan/rumor-chat-app
+cd rumor-chat-app
+```
+
+4. Install dependencies:
+```
+npm install
+```
+
+5. Create a .env file and add your Firebase configuration:
+env
+```
+VITE_API_KEY=your_api_key
+VITE_AUTH_DOMAIN=your_auth_domain
+VITE_PROJECT_ID=your_project_id
+VITE_STORAGE_BUCKET=your_storage_bucket
+VITE_MESSAGING_SENDER_ID=your_sender_id
+VITE_APP_ID=your_app_id
+```
+
+6. Start the development server:
+bash
+```
+npm run dev
+```
+
+## Screenshots
+![]
