@@ -85,3 +85,35 @@
     background-color: #FAF7F0;
 }
 
+.ls-nav .menu{
+    position: relative;
+    padding: 10px 0px;
+}
+
+.menu .sub-menu{
+    position: absolute;
+    top:100%;
+    right: 0;
+    width: 100px;
+    padding: 10px;
+    border-radius: 5px;
+    background-color: #c68729;
+    color: white;
+    display: none;
+}
+
+.sub-menu hr{
+    border: none;
+    height: 1px;
+    background: #6A4328;
+    margin: 8px 0px;
+}
+
+.sub-menu p{
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.menu:hover .sub-menu{
+    display: block;
+}
