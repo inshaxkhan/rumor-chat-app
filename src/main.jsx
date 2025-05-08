@@ -8,8 +8,7 @@ import AppContextProvider from './context/AppContext.jsx'
 createRoot(document.getElementById('root')).render(
 <BrowserRouter> 
   <AppContextProvider>
-    <App />
-  </AppContextProvider>  
+    <App/>
+  </AppContextProvider>
 </BrowserRouter>
- 
 )
