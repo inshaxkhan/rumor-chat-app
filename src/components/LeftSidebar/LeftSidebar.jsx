@@ -2,10 +2,21 @@ import React, { useContext, useState } from "react";
 import "./LeftSidebar.css";
 import assets from "./../../assets/assets.js";
 import { useNavigate } from "react-router-dom";
-import { arrayUnion, collection, doc, getDocs, query, serverTimestamp, setDoc, updateDoc, where } from "firebase/firestore";
+import {
+  arrayUnion,
+  collection,
+  doc,
+  getDocs,
+  query,
+  serverTimestamp,
+  setDoc,
+  updateDoc,
+  where,
+} from "firebase/firestore";
 import { db } from "../../config/firebase.js";
 import { AppContext } from "../../context/AppContext.jsx";
 import { toast } from "react-toastify";
+import Loader from "../Loader.jsx";
 
 const LeftSidebar = () => {
   const navigate = useNavigate();
@@ -15,79 +26,102 @@ const LeftSidebar = () => {
 
   const inputHandler = async (e) => {
     try {
-      const input = e.target.value;
+      const input = e.target.value.trim().toLowerCase();
       if (input) {
         setShowSearch(true);
         const userRef = collection(db, "users");
-        const q = query(userRef, where("username", "==", input.toLowerCase()));
+        const q = query(
+          userRef,
+          where("username", ">=", input),
+          where("username", "<=", input + "\uf8ff")
+        );
         const querySnap = await getDocs(q);
-        if (!querySnap.empty && querySnap.docs[0].data().id !== userData.id) {
-          // if a user chat is already open in chatBox: do NOT allow searching the same username
-          let userExist=false
-          chatData.map((user)=>{
-              if(user.rId===querySnap.docs[0].data().id){
-                userExist=true;
-              }
-          })
-          if(!userExist){
-            setUser(querySnap.docs[0].data());
+
+        if (!querySnap.empty) {
+          const foundUser = querySnap.docs[0].data();
+          if (foundUser.id !== userData.id) {
+            let userExist = false;
+
+            if (Array.isArray(chatData)) {
+              chatData.forEach((chat) => {
+                if (chat.rId === foundUser.id) {
+                  userExist = true;
+                }
+              });
+            }
+
+            if (!userExist) {
+              setUser(foundUser);
+            } else {
+              setUser(null);
+            }
+          } else {
+            setUser(null); // if same user is searched
           }
-          setUser(querySnap.docs[0].data());
-        }
-        else{
+        } else {
           setUser(null);
         }
+      } else {
+        setShowSearch(false);
+        setUser(null);
       }
-      else{
-        setShowSearch(false)
-      }
-    } catch (error) {}
-  }
-
-  const addChat=async()=>{
-    const messagesRef=collection(db,"messages");
-    const chatsRef=collection(db,"chats");
-    try {
-      const newMessageRef=doc(messagesRef);
-      await setDoc(newMessageRef,{
-        createdAt:serverTimestamp(),
-        messages:[]
-      })
-
-      await updateDoc(doc(chatsRef,user.id),{
-        chatData: arrayUnion({
-          messageId: newMessageRef.id,
-          lastMessage:"",
-          rId:userData.id,
-          updatedAt:Date.now(),
-          messageSeen:true
-        })
-      })
-
-      await updateDoc(doc(chatsRef,userData.id),{
-        chatData: arrayUnion({
-          messageId: newMessageRef.id,
-          lastMessage:"",
-          rId:user.id,
-          updatedAt:Date.now(),
-          messageSeen:true
-        })
-      })
-
     } catch (error) {
-      toast.error(error.message);
-      console.log(error);
-      
+      console.error("Search error:", error.message);
     }
-  }
+  };
+
+  const addChat = async () => {
+    const messagesRef = collection(db, "messages");
+    const chatsRef = collection(db, "chats");
+
+    try {
+      const newMessageRef = doc(messagesRef);
+      await setDoc(newMessageRef, {
+        createdAt: serverTimestamp(),
+        messages: [],
+      });
+
+      // Add to recipient chat
+      await updateDoc(doc(chatsRef, user.id), {
+        chatData: arrayUnion({
+          messageId: newMessageRef.id,
+          lastMessage: "",
+          rId: userData.id,
+          rName: userData.name,
+          rAvatar: userData.avatar,
+          updatedAt: Date.now(),
+          messageSeen: true,
+        }),
+      });
+
+      // Add to current user chat
+      await updateDoc(doc(chatsRef, userData.id), {
+        chatData: arrayUnion({
+          messageId: newMessageRef.id,
+          lastMessage: "",
+          rId: user.id,
+          rName: user.name,
+          rAvatar: user.avatar,
+          updatedAt: Date.now(),
+          messageSeen: true,
+        }),
+      });
+
+      setShowSearch(false);
+      setUser(null);
+    } catch (error) {
+      toast.error("Failed to add chat: " + error.message);
+      console.error("addChat error:", error);
+    }
+  };
 
   return (
     <div className="ls">
       <div className="ls-top">
         <div className="ls-nav">
-          <img src={assets.logo_rev} alt="" className="logo" />
+          <img src={assets.logo_rev} alt="Logo" className="logo" />
           <div className="menu">
-            <img src={assets.menu_icon} alt="" />
+            <img src={assets.menu_icon} alt="Menu Icon" />
             <div className="sub-menu">
               <p onClick={() => navigate("/profile")}>Edit Profile</p>
               <hr />
@@ -97,7 +131,7 @@ const LeftSidebar = () => {
         </div>
 
         <div className="ls-search">
-          <img src={assets.search_icon} alt="" />
+          <img src={assets.search_icon} alt="Search Icon" />
           <input
             onChange={inputHandler}
             type="text"
@@ -108,24 +142,32 @@ const LeftSidebar = () => {
       </div>
 
       <div className="ls-list">
-      {showSearch && user
-      ? 
-      <div onClick={addChat} className="friends add-user">
-        <img src={user.avatar} alt="" />
-        <p>{user.name}</p>
-      </div>
-      // error
-      :Array(12)
-          .fill("")
-          .map((item, index) => (
+        {showSearch && user ? (
+          <div onClick={addChat} className="friends add-user cursor-pointer">
+            <img src={user.avatar} alt={user.name} />
+            <p>{user.name}</p>
+          </div>
+        ): Array.isArray(chatData) ? (
+          chatData.map((item, index) => (
             <div key={index} className="friends">
-              <img src={assets.profile_ana} alt="" />
+              <img src={item.userData.avatar} alt="" />
               <div>
-                <p>Ana Siddiqui</p>
-                <span>Hello, How are you?</span>
+                <p>{item.userData.name}</p>
+                <span>{item.lastMessage  || "last message"}</span>
               </div>
             </div>
-          ))}
+          ))
+        ) : (
+          <div className="flex flex-col items-center gap-4">
+            <Loader/>
+            <Loader/>
+            <Loader/>
+            <Loader/>
+            <Loader/>
+            <Loader/>
+            <Loader/>
+          </div>
+        )}
       </div>
     </div>
   );
