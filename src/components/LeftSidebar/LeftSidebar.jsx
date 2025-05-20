@@ -26,48 +26,29 @@ const LeftSidebar = () => {
 
   const inputHandler = async (e) => {
     try {
-      const input = e.target.value.trim().toLowerCase();
+      const input = e.target.value;
       if (input) {
         setShowSearch(true);
         const userRef = collection(db, "users");
-        const q = query(
-          userRef,
-          where("username", ">=", input),
-          where("username", "<=", input + "\uf8ff")
-        );
+        const q = query(userRef, where("username", "==", input.toLowerCase()));
         const querySnap = await getDocs(q);
-
-        if (!querySnap.empty) {
-          const foundUser = querySnap.docs[0].data();
-          if (foundUser.id !== userData.id) {
-            let userExist = false;
-
-            if (Array.isArray(chatData)) {
-              chatData.forEach((chat) => {
-                if (chat.rId === foundUser.id) {
-                  userExist = true;
-                }
-              });
+        if (!querySnap.empty && querySnap.docs[0].data().id !== userData.id) {
+          let userExist=false;
+          chatData.map((user)=>{
+            if(user.rId===querySnap.docs[0].data().id){
+              userExist=true;
             }
-
-            if (!userExist) {
-              setUser(foundUser);
-            } else {
-              setUser(null);
-            }
-          } else {
-            setUser(null); // if same user is searched
+          })
+          if(!userExist){
+            setUser(querySnap.docs[0].data());
           }
         } else {
           setUser(null);
         }
       } else {
         setShowSearch(false);
-        setUser(null);
       }
-    } catch (error) {
-      console.error("Search error:", error.message);
-    }
+    } catch (error) {}
   };
 
   const addChat = async () => {
@@ -87,11 +68,9 @@ const LeftSidebar = () => {
           messageId: newMessageRef.id,
           lastMessage: "",
           rId: userData.id,
-          rName: userData.name,
-          rAvatar: userData.avatar,
           updatedAt: Date.now(),
           messageSeen: true,
-        }),
+        })
       });
 
       // Add to current user chat
@@ -100,20 +79,22 @@ const LeftSidebar = () => {
           messageId: newMessageRef.id,
           lastMessage: "",
           rId: user.id,
-          rName: user.name,
-          rAvatar: user.avatar,
           updatedAt: Date.now(),
           messageSeen: true,
         }),
       });
 
-      setShowSearch(false);
-      setUser(null);
+  //     setShowSearch(false);
+  //     setUser(null);
     } catch (error) {
       toast.error("Failed to add chat: " + error.message);
       console.error("addChat error:", error);
     }
   };
+
+  const setChat=async(item)=>{
+    console.log(item)
+  }
 
   return (
     <div className="ls">
@@ -142,32 +123,23 @@ const LeftSidebar = () => {
       </div>
 
       <div className="ls-list">
-        {showSearch && user ? (
-          <div onClick={addChat} className="friends add-user cursor-pointer">
-            <img src={user.avatar} alt={user.name} />
-            <p>{user.name}</p>
+        {showSearch && user ? 
+          <div onClick={addChat} className="friends add-user">
+            <img src={user.avatar} alt="" />
+            <div>
+              <p>{user.name}</p>
+              <span>{user.lastMessage}</span>
+            </div>
           </div>
-        ): Array.isArray(chatData) ? (
-          chatData.map((item, index) => (
-            <div key={index} className="friends">
+         : chatData.map((item, index) => (
+            <div onClick={()=>{setChat(item)}} key={index} className="friends">
               <img src={item.userData.avatar} alt="" />
               <div>
                 <p>{item.userData.name}</p>
-                <span>{item.lastMessage  || "last message"}</span>
+                <span>{item.lastMessage}</span>
               </div>
             </div>
-          ))
-        ) : (
-          <div className="flex flex-col items-center gap-4">
-            <Loader/>
-            <Loader/>
-            <Loader/>
-            <Loader/>
-            <Loader/>
-            <Loader/>
-            <Loader/>
-          </div>
-        )}
+          ))}
       </div>
     </div>
   );
