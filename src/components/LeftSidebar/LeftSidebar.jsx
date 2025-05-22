@@ -20,7 +20,7 @@ import Loader from "../Loader.jsx";
 
 const LeftSidebar = () => {
   const navigate = useNavigate();
-  const { userData, chatData } = useContext(AppContext);
+  const { userData, chatData, chatUser, setChatUser, messagesId, setMessagesId } = useContext(AppContext);
   const [user, setUser] = useState(null);
   const [showSearch, setShowSearch] = useState(false);
 
@@ -84,8 +84,6 @@ const LeftSidebar = () => {
         }),
       });
 
-  //     setShowSearch(false);
-  //     setUser(null);
     } catch (error) {
       toast.error("Failed to add chat: " + error.message);
       console.error("addChat error:", error);
@@ -93,7 +91,8 @@ const LeftSidebar = () => {
   };
 
   const setChat=async(item)=>{
-    console.log(item)
+    setMessagesId(item.messageId);
+    setChatUser(item);
   }
 
   return (

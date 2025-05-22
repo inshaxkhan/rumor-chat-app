@@ -1,56 +1,139 @@
-import React from 'react'
-import './ChatBox.css'
-import './../../assets/assets.js'
-import assets from './../../assets/assets.js'
+import React, { useContext, useEffect, useState } from "react";
+import "./ChatBox.css";
+import "./../../assets/assets.js";
+import assets from "./../../assets/assets.js";
+import { AppContext } from "../../context/AppContext.jsx";
+import { arrayUnion, doc, getDoc, onSnapshot, updateDoc } from "firebase/firestore";
+import { db } from "../../config/firebase.js";
 
 const ChatBox = () => {
-  return (
-    <div className='chat-box'>
+  const { userData, messagesId, chatUser, messages, setMessages } =
+    useContext(AppContext);
 
+  const [input, setInput] = useState("");
+  const sendMessage = async()=>{
+    try {
+        if(input && messagesId){
+          await updateDoc(doc(db, 'messages', messagesId),{
+            messages: arrayUnion({
+              sId: userData.id,
+              text: input,
+              createdAt:new Date()
+            })
+          })
+
+          const userIds=[chatUser.rId, userData.id]
+          
+          // update last seen
+          userIds.forEach(async(id)=>{
+            const userChatsRef=doc(db, "chats", id);
+            const userChatsSnapshot=await getDoc(userChatsRef);
+
+            if(userChatsSnapshot.exists()){
+              const userChatData=userChatsSnapshot.data();
+              // console.log(messagesId);
+              const chatIndex=userChatData.chatData.findIndex((c)=>c.messageId===messagesId);
+
+              // update last message for left side bar
+              userChatData.chatData[chatIndex].lastMessage=input;
+              
+              userChatData.chatData[chatIndex].updatedAt= Date.now();
+
+              if(userChatData.chatData[chatIndex].rId===userData.id){
+                userChatData.chatData[chatIndex].messageSeen=false;
+              }
+
+              await updateDoc(userChatsRef,{
+                chatData: userChatData.chatData
+              })
+            }
+
+          })
+        }
+    } catch (error) {
+      toast.error(error.message)
+    }
+
+    // clear chat input box, once msg is sent
+    setInput("")
+  }
+
+  //load messages
+  useEffect(()=>{
+    if(messagesId){
+      const unSub=onSnapshot(doc(db,"messages", messagesId), (res)=>{
+        setMessages(res.data().messages.reverse())
+        console.log(res.data().messages.reverse());
+      })
+      return()=>{
+        unSub();
+      }
+    }
+  },[messagesId])
+
+  //convert time stamp
+  const convertTimeStamp=(timestamp)=>{
+    let date=timestamp.toDate();
+    const hour=date.getHours();
+    const min=date.getMinutes();
+
+    if(hour>12){
+      return hour-12 + ":" + min + "PM";
+    }
+    else{
+      return hour + ":" + min + "AM";
+    }
+  }
+
+  // when you click on a user from left search bar, display his/her chatUser, else display LOGO screen
+
+  return chatUser ? (
+    <div className="chat-box">
       <div className="chat-user">
-        <img src={assets.profile_ana} alt="" />
-        <p>Ana Siddiqui <img src={assets.green_dot} className='dot' alt="" /> </p>
-        <img src={assets.help_icon} className='help' alt="" />
+        <img src={chatUser.userData.avatar} alt="" />
+        <p>
+          {chatUser.userData.name} <img src={assets.green_dot} className="dot" alt="" />{" "}
+        </p>
+        <img src={assets.help_icon} className="help" alt="" />
       </div>
 
+
+      {/* displaying chats */}
       <div className="chat-msg">
 
-        <div className="s-msg">
-          <p className="msg">This is a sender's message placeholder... </p>
-          <div>
-            <img src={assets.profile_brian} alt="" />
-            <p>1:15 PM</p>
-          </div>
-        </div>
-
-        <div className="s-msg">
-          <img className='msg-img' src={assets.img1} alt="" />
-          <div>
-            <img src={assets.profile_brian} alt="" />
-            <p>1:15 PM</p>
-          </div>
-        </div>
-
-        <div className="r-msg">
-          <p className="msg">This is a receiver's message placeholder... </p>
-          <div>
-            <img src={assets.profile_ana} alt="" />
-            <p>1:15 PM</p>
-          </div>
-        </div>
+        {messages.map((msg, index)=>(
+                  <div key={index} className={msg.sId===userData.id ? "s-msg" : "r-msg"}>
+                  <p className="msg">{msg.text}</p>
+                  <div>
+                    <img src={msg.sId===userData.id ? userData.avatar : chatUser.userData.avatar } alt="" />
+                    <p>{convertTimeStamp(msg.createdAt)}</p>
+                  </div>
+                </div>
+        ))}
 
       </div>
+      
 
       <div className="chat-input">
-        <input className='input-msg' type="text" placeholder='Send a message' />
-        <input type="file" id='image' accept='image/png, image/jpeg, image/jpg' hidden />
+        <input onChange={(e)=>setInput(e.target.value)} value={input} className="input-msg" type="text" placeholder="Send a message" />
+        <input
+          type="file"
+          id="image"
+          accept="image/png, image/jpeg, image/jpg"
+          hidden
+        />
         <label htmlFor="image">
           <img src={assets.gallery_icon} alt="" />
         </label>
-        <img src={assets.send_icon} alt="" />
+        <img onClick={sendMessage} src={assets.send_icon} alt="" />
       </div>
     </div>
-  )
-}
+  ) : (
+    <div className="chat-welcome w-[100%] flex flex-col items-center justify-center gap-[5px] bg-[#C88A35] ">
+      <img src={assets.logo_big} alt="logo" className="w-[160px]"/>
+      {/* <p className="text-[15px] text-white">Chat Anytime, Anywhere</p> */}
+    </div>
+  );
+};
 
-export default ChatBox
+export default ChatBox;
