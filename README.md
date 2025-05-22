@@ -52,5 +52,5 @@ npm run dev
 
 ## Screenshots
 ![Login Page](screenshots/1.png)
-![Chat Page](screenshots/2.png)
-
+![Chat Page](screenshots/img2.png)
+![View media in full screen](screenshots/img3.png)

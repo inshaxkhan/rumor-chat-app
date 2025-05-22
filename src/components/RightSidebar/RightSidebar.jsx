@@ -86,12 +86,12 @@ const RightSidebar = () => {
             <div className="fixed top-0 bottom-0 left-0 right-0  z-30 flex items-center justify-center text-gray-600 bg-black/50">
               <div
                 ref={popupRef}
-                className="max-w-[90%] max-h-[90%] bg-white shadow-lg border-2 border-[#c68729] flex items-center justify-center"
+                className="max-w-[300px] md:max-w-[500px] md:max-h-[800px]  bg-white shadow-lg border-2 border-[#c68729] flex items-center justify-center"
               >
                 <img
                   src={activeMedia}
                   alt="Popup"
-                  className="object-cover"
+                  className="max-w-full max-h-full object-contain"
                 />
                 
               </div>
