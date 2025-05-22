@@ -23,6 +23,7 @@ import add_icon from './add_icon.jpeg'
 import menu_icon from './menu_icon.jpeg'
 import arrow_icon from './arrow_icon.jpeg'
 import green_dot from './green_dot.jpeg'
+import crossicon from './crossicon.png'
 
 const assets = {
     avatar_icon,
@@ -49,7 +50,8 @@ const assets = {
     add_icon,
     menu_icon,
     arrow_icon,
-    green_dot
+    green_dot,
+    crossicon,
 }
 
 export default assets;
