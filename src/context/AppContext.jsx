@@ -28,7 +28,7 @@ const AppContextProvider=(props)=>{
             }
 
             await updateDoc(userRef,{
-                lastSeen:Data.now()
+                lastSeen:Date.now()
             })
 
             setInterval(async() => {
@@ -37,7 +37,7 @@ const AppContextProvider=(props)=>{
                         lastSeen:Date.now()
                     })
                 }
-            }, 60000);
+            }, 10000);
         } catch (error) {
             
         }

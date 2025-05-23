@@ -44,7 +44,7 @@ const ChatBox = () => {
             );
 
             // update last message for left side bar
-            userChatData.chatData[chatIndex].lastMessage = input.slice(0,30);
+            userChatData.chatData[chatIndex].lastMessage = input.slice(0, 30);
 
             userChatData.chatData[chatIndex].updatedAt = Date.now();
 
@@ -91,6 +91,25 @@ const ChatBox = () => {
       return hour + ":" + min + "AM";
     }
   };
+
+  //get last seen of users
+  const lastSeenMsg = (timestamp) => {
+    const date = new Date(timestamp);
+
+  // Format DD/MM/YY
+  const day = date.getDate().toString().padStart(2, '0');
+  const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Months are 0-based
+  const year = date.getFullYear().toString().slice(-2); // Get last 2 digits
+
+  // Format time
+  let hour = date.getHours();
+  let min = date.getMinutes().toString().padStart(2, '0');
+  const ampm = hour >= 12 ? 'PM' : 'AM';
+  hour = hour % 12 || 12;
+
+  return `${day}/${month}/${year} at ${hour}:${min} ${ampm}`;
+  };
+  
 
   //send images in chat
   const sendImage = async (e) => {
@@ -145,8 +164,13 @@ const ChatBox = () => {
       <div className="chat-user">
         <img src={chatUser.userData.avatar} alt="" />
         <p>
-          {chatUser.userData.name}{" "}
-          <img src={assets.green_dot} className="dot" alt="" />{" "}
+          {chatUser.userData.name.split(0,16)} {/* display green dot/active now  */}
+          {Date.now() - chatUser.userData.lastSeen <= 70000 ? (
+            <img src={assets.green_dot} className="dot" alt="" />
+          ) :  <span className="last-seen text-[11px] text-amber-800 ">
+          &nbsp; • Last seen On: {lastSeenMsg(chatUser.userData.lastSeen)}
+            </span>
+          }
         </p>
         <img src={assets.help_icon} className="help" alt="" />
       </div>
@@ -158,11 +182,16 @@ const ChatBox = () => {
             key={index}
             className={msg.sId === userData.id ? "s-msg" : "r-msg"}
           >
-            {msg["image"]
-            ? <img className="msg-img border border-amber-600" src={msg.image} alt="images"/>
-            : <p className="msg"> {msg.text} </p>
-            }
-            
+            {msg["image"] ? (
+              <img
+                className="msg-img border border-amber-600"
+                src={msg.image}
+                alt="images"
+              />
+            ) : (
+              <p className="msg"> {msg.text} </p>
+            )}
+
             <div>
               <img
                 src={

@@ -51,11 +51,17 @@ const RightSidebar = () => {
       <div className="rs-profile">
         <img src={chatUser.userData.avatar} alt="" />
         <h3>
+          {chatUser.userData.name.slice(0, 17)} 
+
+          {/* display green dot/active now  */}
+          { Date.now()-chatUser.userData.lastSeen <= 70000 ? 
+          <img src={assets.green_dot} className="dot" alt="" />
+          : null
+          }
+
           {" "}
-          {chatUser.userData.name.slice(0, 15)}{" "}
-          <img src={assets.green_dot} className="dot" alt="" />{" "}
         </h3>
-        <p>{chatUser.userData.bio}</p>
+        <p>{chatUser.userData.bio.slice(0,50)}</p>
       </div>
 
       <hr />
@@ -72,9 +78,6 @@ const RightSidebar = () => {
               alt=""
             />
           ))}
-
-
-
 
         </div>
       </div>
