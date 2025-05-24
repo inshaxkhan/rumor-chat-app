@@ -59,7 +59,7 @@
 }
 
 .chat-input label img{
-    width: 22px;
+    width: 50px;
 }
 
 .chat-input input{
@@ -123,4 +123,44 @@
     max-width:230px;
     margin-bottom: 10px;
     border-radius: 10px;
+    border: brown
+}
+
+.chat-welcome{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap:5px;
+    background-color: #C88A35;
+}
+
+.chat-welcome img{
+    width: 150px;
+}
+
+.chat-user .arrow{
+    display: none;
+}
+
+@media (max-width:900px) {
+    .chat-box{
+        width: 100%;
+        justify-content: center;
+    }
+
+    .chat-user .arrow{
+        display:block;
+    }
+
+    .chat-user .help{
+        display: none;
+    }
+}
+
+.chat-user .last-seen{
+    font-size: 11px;
+    color: gray; 
+    gap:5px;
 }

@@ -1,7 +1,8 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import "./LeftSidebar.css";
 import assets from "./../../assets/assets.js";
 import { useNavigate } from "react-router-dom";
+
 import {
   arrayUnion,
   collection,
@@ -28,6 +29,8 @@ const LeftSidebar = () => {
     setChatUser,
     messagesId,
     setMessagesId,
+    chatVisible,
+    setChatVisible,
   } = useContext(AppContext);
   const [user, setUser] = useState(null);
   const [showSearch, setShowSearch] = useState(false);
@@ -91,6 +94,20 @@ const LeftSidebar = () => {
           messageSeen: true,
         }),
       });
+
+      //add user in chatbox on clicking in search
+      const uSnap = await getDoc(doc(db, "users", user.id));
+      const uData = uSnap.data();
+      setChat({
+        messagesId: newMessageRef.id,
+        lastMessage: "",
+        rId: user.id,
+        updatedAt: Date.now(),
+        messageSeen:true,
+        userData: uData,
+      });
+      setShowSearch(false)
+      setChatVisible(true)
     } catch (error) {
       toast.error("Failed to add chat: " + error.message);
       console.error("addChat error:", error);
@@ -98,21 +115,37 @@ const LeftSidebar = () => {
   };
 
   const setChat = async (item) => {
-    setMessagesId(item.messageId);
-    setChatUser(item);
-    const userChatsRef = doc(db, "chats", userData.id);
-    const userChatsSnapshot = await getDoc(userChatsRef);
-    const userChatsData = userChatsSnapshot.data();
-    const chatIndex = userChatsData.chatData.findIndex(
-      (c) => c.messageId === item.messageId
-    );
-    userChatsData.chatData[chatIndex].messageSeen = true;
-    await updateDoc(userChatsRef, { chatData: userChatsData.chatData });
-  
+    try {
+      setMessagesId(item.messageId);
+      setChatUser(item);
+      const userChatsRef = doc(db, "chats", userData.id);
+      const userChatsSnapshot = await getDoc(userChatsRef);
+      const userChatsData = userChatsSnapshot.data();
+      const chatIndex = userChatsData.chatData.findIndex(
+        (c) => c.messageId === item.messageId
+      );
+      userChatsData.chatData[chatIndex].messageSeen = true;
+      await updateDoc(userChatsRef, { chatData: userChatsData.chatData });
+      setChatVisible(true);
+    } catch (error) {
+      toast.error(error.message);
+    }
   };
 
+useEffect(()=>{
+  const updateChatUserData=async()=>{
+    if(chatUser){
+      const userRef= doc(db, "users", chatUser.userData.id);
+      const userSnap=await getDoc(userRef);
+      const userData=userSnap.data();
+      setChatUser(prev=>({...prev,userData:userData}))
+    }
+  }
+  updateChatUserData();
+},[chatData])
+
   return (
-    <div className="ls">
+    <div className={`ls ${chatVisible ? "hidden" : ""}`}>
       <div className="ls-top">
         <div className="ls-nav">
           <img src={assets.logo_rev} alt="Logo" className="logo" />
@@ -132,7 +165,7 @@ const LeftSidebar = () => {
             onChange={inputHandler}
             type="text"
             placeholder="Search here..."
-            className="w-40 px-5 outline-0"
+            className=""
           />
         </div>
       </div>

@@ -32,6 +32,7 @@
     gap:8px;
     padding: 8px 10px;
     margin-top: 15px;
+    width: 40px;
 }
 
 .ls-search img{
@@ -42,6 +43,7 @@
     background: transparent;
     border: none;
     font-size: 14px;
+    
 }
 
 .ls-search input::placeholder{
@@ -116,4 +118,10 @@
 
 .menu:hover .sub-menu{
     display: block;
+}
+
+@media (max-width:900px) {
+    .ls{
+        width: 100%;
+    }
 }

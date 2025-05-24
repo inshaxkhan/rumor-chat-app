@@ -59,3 +59,11 @@
     color: #6A4328;
 
 }
+
+@media (max-width:786px) {
+    .login{
+        flex-direction: column;
+        justify-content: center;
+        gap:30px;
+    }
+}

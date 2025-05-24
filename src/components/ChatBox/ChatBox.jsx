@@ -14,7 +14,7 @@ import { db } from "../../config/firebase.js";
 import upload from "../../lib/upload.js";
 
 const ChatBox = () => {
-  const { userData, messagesId, chatUser, messages, setMessages } =
+  const { userData, messagesId, chatUser, messages, setMessages, chatVisible, setChatVisible } =
     useContext(AppContext);
 
   const [input, setInput] = useState("");
@@ -160,19 +160,20 @@ const ChatBox = () => {
 
   // when you click on a user from left search bar, display his/her chatUser, else display LOGO screen
   return chatUser ? (
-    <div className="chat-box">
+    <div className={`chat-box ${chatVisible ? "" : "hidden"}`}>
       <div className="chat-user">
         <img src={chatUser.userData.avatar} alt="" />
         <p>
           {chatUser.userData.name.split(0,16)} {/* display green dot/active now  */}
           {Date.now() - chatUser.userData.lastSeen <= 70000 ? (
             <img src={assets.green_dot} className="dot" alt="" />
-          ) :  <span className="last-seen text-[11px] text-amber-800 ">
-          &nbsp; • Last seen On: {lastSeenMsg(chatUser.userData.lastSeen)}
+          ) :  <span className="last-seen text-[11px] text-gray-400 ">
+          • Last seen: {lastSeenMsg(chatUser.userData.lastSeen)}
             </span>
           }
         </p>
         <img src={assets.help_icon} className="help" alt="" />
+        <img src={assets.arrow_icon} onClick={()=>setChatVisible(false)} className="arrow" alt="" />
       </div>
 
       {/* displaying chats */}
@@ -184,7 +185,7 @@ const ChatBox = () => {
           >
             {msg["image"] ? (
               <img
-                className="msg-img border border-amber-600"
+                className="msg-img"
                 src={msg.image}
                 alt="images"
               />
@@ -229,8 +230,9 @@ const ChatBox = () => {
       </div>
     </div>
   ) : (
-    <div className="chat-welcome w-[100%] flex flex-col items-center justify-center gap-[5px] bg-[#C88A35] ">
-      <img src={assets.logo_big} alt="logo" className="w-[160px]" />
+
+    <div className={`chat-welcome ${chatVisible ? "" : "hidden"}`}>
+      <img src={assets.logo_big} alt="logo" className="" />
     </div>
   );
 };
