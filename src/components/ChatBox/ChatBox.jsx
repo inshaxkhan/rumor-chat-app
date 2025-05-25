@@ -167,7 +167,7 @@ const ChatBox = () => {
           {chatUser.userData.name.split(0,16)} {/* display green dot/active now  */}
           {Date.now() - chatUser.userData.lastSeen <= 70000 ? (
             <img src={assets.green_dot} className="dot" alt="" />
-          ) :  <span className="last-seen text-[11px] text-gray-400 ">
+          ) :  <span className="last-seen">
           • Last seen: {lastSeenMsg(chatUser.userData.lastSeen)}
             </span>
           }
@@ -224,7 +224,7 @@ const ChatBox = () => {
           hidden
         />
         <label htmlFor="image">
-          <img src={assets.gallery_icon} alt="" />
+          <img src={assets.gallery_icon} className="gallery-icon" alt="" />
         </label>
         <img onClick={sendMessage} src={assets.send_icon} alt="" />
       </div>

@@ -86,15 +86,15 @@ const RightSidebar = () => {
 
 {/* for showing images/media clicked: in full size */}
       {activeMedia && (
-            <div className="fixed top-0 bottom-0 left-0 right-0  z-30 flex items-center justify-center text-gray-600 bg-black/50">
+            <div className="active-media">
               <div
                 ref={popupRef}
-                className="max-w-[300px] md:max-w-[500px] md:max-h-[800px]  bg-white shadow-lg border-2 border-[#c68729] flex items-center justify-center"
+                className="pop-up-ref"
               >
                 <img
                   src={activeMedia}
                   alt="Popup"
-                  className="max-w-full max-h-full object-contain"
+                  className="pop-up"
                 />
                 
               </div>
