@@ -96,7 +96,11 @@ const ProfileUpdate = () => {
 
         </form>
 
-        <img className='profile-pic' src={image? URL.createObjectURL(image) : prevImage ? prevImage : assets.logo_icon} alt="" />
+        <div className='imgdiv'>
+          <img src={assets.arrow_icon} className='arrow-img' onClick={()=>navigate(-1)}/>
+
+          <img className='profile-pic' src={image? URL.createObjectURL(image) : prevImage ? prevImage : assets.logo_icon} alt="" />
+        </div>
       </div>
     </div>
   )
